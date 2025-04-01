@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - QuickBooks Bulk Delete</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Pricing Plans</h1>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h2>Monthly</h2>
+                <div class="price">$24<span>/month</span></div>
+                <ul>
+                    <li>Unlimited Deletes</li>
+                    <li>Cancel anytime</li>
+                    <li>Premium support</li>
+                </ul>
+                <button onclick="createCheckoutSession('{{ monthly_price_id }}')">Get Started</button>
+            </div>
+            
+            <div class="pricing-card featured">
+                <div class="featured-badge">Save 22%</div>
+                <h2>Annual</h2>
+                <div class="price">$225<span>/year</span></div>
+                <ul>
+                    <li>Unlimited Deletes</li>
+                    <li>Best value</li>
+                    <li>Priority support</li>
+                </ul>
+                <button onclick="createCheckoutSession('{{ annual_price_id }}')">Get Started</button>
+            </div>
+        </div>
+
+        <div class="free-credits">
+            <h2>Free Credits</h2>
+            <p>Every user gets 20 free credits per month to try out our service.</p>
+            <p>No credit card required!</p>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('{{ stripe_public_key }}');
+        
+        async function createCheckoutSession(priceId) {
+            try {
+                const response = await fetch('/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        price_id: priceId
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Error creating checkout session');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating checkout session');
+            }
+        }
+    </script>
+</body>
+</html>

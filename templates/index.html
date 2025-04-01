@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Delete Transactions</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bulk Delete Transactions</h1>
+            <div class="header-actions">
+                {% if authenticated %}
+                    {% if has_subscription %}
+                        <span class="subscription-badge">Unlimited Deletes</span>
+                    {% else %}
+                        <button onclick="window.location.href='/pricing'" class="upgrade-button">Upgrade to Unlimited</button>
+                    {% endif %}
+                    <button onclick="createPortalSession()" class="secondary-button">Manage Account</button>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div id="auth-section" {% if authenticated %}style="display: none;"{% endif %}>
+            <button onclick="window.location.href='/auth'">Connect to QuickBooks</button>
+        </div>
+
+        <div id="main-section" {% if not authenticated %}style="display: none;"{% endif %}>
+            <div class="search-section">
+                <input type="text" id="search" placeholder="Search by name, number, or amount">
+                <select id="object-type">
+                    <!-- Populated by JavaScript -->
+                </select>
+            </div>
+
+            <h2 id="category-title"></h2>
+            <div class="objects-list">
+                <table>
+                    <thead id="objects-header">
+                        <!-- Headers populated by JavaScript -->
+                    </thead>
+                    <tbody id="objects-table">
+                        <!-- Rows populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <button id="delete-btn" disabled>Delete Selected</button>
+                <span id="status"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Processing delete operation...</p>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('{{ stripe_public_key }}');
+        
+        async function createPortalSession() {
+            window.location.href = 'https://billing.stripe.com/p/login/test_28odQUc7qaG8gTK9AA';
+        }
+    </script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
